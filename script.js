@@ -1,9 +1,8 @@
+import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm'
 // Supabase configuration
 const SUPABASE_URL = 'https://cvqlhrrqlfddyxndcoag.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN2cWxocnJxbGZkZHl4bmRjb2FnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjE1MTU2MzcsImV4cCI6MjA3NzA5MTYzN30.i1y6_RvqV-Qc4881f_sIit9rLp7-hfrzSm_T9n9ogUU';
-
-// Initialize Supabase
-const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 // DOM elements
 const commentForm = document.getElementById('commentForm');
