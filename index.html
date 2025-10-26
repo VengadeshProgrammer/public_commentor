@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Public Comments</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>💬 Public Comments</h1>
+            <p>Share your thoughts anonymously</p>
+        </header>
+
+        <div class="comment-form">
+            <h3>Post a Comment</h3>
+            <form id="commentForm">
+                <div class="input-group">
+                    <label for="name">Name (optional):</label>
+                    <input type="text" id="name" placeholder="Anonymous">
+                </div>
+                <div class="input-group">
+                    <label for="comment">Comment:</label>
+                    <textarea id="comment" placeholder="Share your thoughts..." required></textarea>
+                </div>
+                <button type="submit" id="submitBtn">Post Comment</button>
+            </form>
+        </div>
+
+        <div class="comments-section">
+            <h3>Recent Comments</h3>
+            <div id="commentsList" class="comments-list">
+                <!-- Comments will be loaded here -->
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
