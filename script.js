@@ -10,6 +10,31 @@ const commentForm = document.getElementById('commentForm');
 const commentsList = document.getElementById('commentsList');
 const submitBtn = document.getElementById('submitBtn');
 
+// Function to show toast notification
+function showToast(message, type = 'success') {
+    // Remove existing toast
+    const existingToast = document.querySelector('.toast');
+    if (existingToast) {
+        existingToast.remove();
+    }
+
+    const toast = document.createElement('div');
+    toast.className = `toast ${type === 'success' ? '' : 'error'}`;
+    toast.textContent = message;
+    toast.style.background = type === 'success' ? '#10b981' : '#ef4444';
+    
+    document.body.appendChild(toast);
+
+    // Show toast
+    setTimeout(() => toast.classList.add('show'), 100);
+
+    // Hide and remove toast after 3 seconds
+    setTimeout(() => {
+        toast.classList.remove('show');
+        setTimeout(() => toast.remove(), 300);
+    }, 3000);
+}
+
 // Function to format date
 function formatDate(dateString) {
     const date = new Date(dateString);
@@ -45,10 +70,76 @@ function showMessage(message, type = 'error') {
     }
 }
 
+// Function to copy comment text to clipboard
+async function copyCommentToClipboard(commentText, button) {
+    try {
+        // Save original button text
+        const originalText = button.textContent;
+        
+        // Disable button during copy process
+        button.disabled = true;
+        button.textContent = 'Copying...';
+
+        // Use Clipboard API to copy text
+        await navigator.clipboard.writeText(commentText);
+        
+        // Show success state
+        button.textContent = 'Copied!';
+        button.classList.add('copied');
+        
+        // Show toast notification
+        showToast('Comment copied to clipboard!');
+        
+        // Reset button after 2 seconds
+        setTimeout(() => {
+            button.textContent = originalText;
+            button.classList.remove('copied');
+            button.disabled = false;
+        }, 2000);
+
+    } catch (err) {
+        console.error('Failed to copy text: ', err);
+        
+        // Fallback for browsers that don't support Clipboard API
+        try {
+            const textArea = document.createElement('textarea');
+            textArea.value = commentText;
+            document.body.appendChild(textArea);
+            textArea.select();
+            document.execCommand('copy');
+            document.body.removeChild(textArea);
+            
+            button.textContent = 'Copied!';
+            button.classList.add('copied');
+            showToast('Comment copied to clipboard!');
+            
+            setTimeout(() => {
+                button.textContent = 'Copy';
+                button.classList.remove('copied');
+                button.disabled = false;
+            }, 2000);
+        } catch (fallbackErr) {
+            console.error('Fallback copy failed: ', fallbackErr);
+            button.textContent = 'Failed';
+            showToast('Failed to copy comment', 'error');
+            
+            setTimeout(() => {
+                button.textContent = 'Copy';
+                button.disabled = false;
+            }, 2000);
+        }
+    }
+}
+
 // Function to create comment card HTML
 function createCommentCard(comment) {
     return `
-        <div class="comment-card">
+        <div class="comment-card" data-comment-id="${comment.id}">
+            <div class="comment-actions">
+                <button class="copy-btn" onclick="copyCommentToClipboard('${comment.comment.replace(/'/g, "\\'")}', this)">
+                    Copy
+                </button>
+            </div>
             <div class="comment-header">
                 <span class="comment-author">${comment.name || 'Anonymous'}</span>
                 <span class="comment-date">${formatDate(comment.created_at)}</span>
@@ -167,6 +258,9 @@ async function init() {
     // Set up real-time updates
     setupRealtimeSubscription();
 }
+
+// Make copyCommentToClipboard function available globally
+window.copyCommentToClipboard = copyCommentToClipboard;
 
 // Start the app when DOM is loaded
 document.addEventListener('DOMContentLoaded', init);
